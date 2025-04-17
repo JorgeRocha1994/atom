@@ -1,6 +1,11 @@
 import { AuthTokenService } from '@core/services/auth-token.service';
 import { Router } from '@angular/router';
 import { UserToken } from '@domain/models/user.model';
+import { reloadPage } from '@shared/utils/navigation';
+
+jest.mock('@shared/utils/navigation', () => ({
+  reloadPage: jest.fn(),
+}));
 
 describe('AuthTokenService', () => {
   let service: AuthTokenService;
@@ -48,12 +53,11 @@ describe('AuthTokenService', () => {
 
   it('should clear all stored data and navigate to root', () => {
     service.setToken(mockUser);
-
     service.clear();
 
     expect(service.getToken()).toBeNull();
     expect(localStorage.getItem('auth_token')).toBeNull();
-    expect(mockRouter.navigate).toHaveBeenCalledWith(['/']);
+    expect(reloadPage).toHaveBeenCalled();
   });
 
   it('should set token on init if localStorage is valid and not expired', () => {

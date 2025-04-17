@@ -1,13 +1,15 @@
 import * as dotenv from 'dotenv';
 dotenv.config();
 
-import * as functions from 'firebase-functions';
+import { onRequest } from 'firebase-functions/v2/https';
+
 import admin from 'firebase-admin';
 import express from 'express';
 import cors from 'cors';
 
 import { userRouter } from './src/interface/routes/user.router';
 import { taskRouter } from './src/interface/routes/tasks.router';
+import { secretJwt } from './src/shared/utils/environment';
 
 admin.initializeApp();
 const firestore = admin.firestore();
@@ -19,4 +21,4 @@ app.use(express.json());
 app.use('/user', userRouter(firestore));
 app.use('/task', taskRouter(firestore));
 
-export const api = functions.https.onRequest(app);
+export const api = onRequest({ secrets: [secretJwt] }, app);

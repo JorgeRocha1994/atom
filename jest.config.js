@@ -11,4 +11,9 @@ module.exports = {
     "^@pages/(.*)$": "<rootDir>/src/app/pages/$1",
     "^@environments/(.*)$": "<rootDir>/src/environments/$1",
   },
+  testPathIgnorePatterns: [
+    "<rootDir>/functions/",
+    "<rootDir>/dist/",
+    "<rootDir>/node_modules/",
+  ],
 };

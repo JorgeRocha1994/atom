@@ -140,21 +140,106 @@ La colección contiene todas las rutas disponibles del backend, y el ambiente in
 
 ---
 
-## 🔐 Secrets de entorno: Generación y configuración
+## 🔐 Configuración de Entorno y Secrets
 
-Este proyecto utiliza variables de entorno almacenadas en un archivo `.env` para gestionar secretos como claves JWT y configuraciones sensibles. Esta sección explica cómo generarlos de forma segura y cómo configurarlos correctamente en tu entorno de desarrollo y en GitHub Actions.
+Este proyecto utiliza **variables de entorno modernas** y **Firebase Secrets** para manejar la configuración tanto local como en producción, de forma segura y organizada.
 
-### 📁 Formato esperado del archivo `.env`
+### 🖥️ Desarrollo local
 
-El archivo `.env` debe ubicarse en la carpeta `functions/` y contener lo siguiente:
+Para trabajar en tu entorno local, crea y utiliza un archivo `.env` dentro de la carpeta `functions/` con el siguiente formato:
 
 ```
 ENVIRONMENT=dev
-SECRET_JWT=...
-EXPIRES_AT=...
+SECRET_JWT=default_secret
+EXPIRES_AT=30
 ```
 
-De igual modo he dejado un archivo `.env.example`, solamente modifica el nombre removiendo `.example` y podras usarlo como tu archivo de ambiente local.
+> ⚠️ Importante: el archivo `.env` **solo funciona en desarrollo local**.  
+> Firebase lo ignora automáticamente al hacer `firebase deploy`.  
+> Para producción, usa `--env-vars-file` para variables normales y `firebase functions:secrets:set` para secretos sensibles.
+> Este archivo **nunca se sube al repositorio** por seguridad, ya está ignorado en `.gitignore`.
+
+---
+
+### 🚀 Producción (Firebase + GitHub Actions)
+
+#### ✅ Variables de entorno públicas (`ENVIRONMENT`, `EXPIRES_AT`)
+
+Estas variables no contienen información sensible, por lo que las cargamos con el archivo `.env.deploy.json`, que se usa automáticamente al desplegar:
+
+```json
+{
+  "ENVIRONMENT": "prd",
+  "EXPIRES_AT": "10"
+}
+```
+
+No necesitas hacer nada más. GitHub Actions lo toma cuando se hace deploy con:
+
+```bash
+firebase deploy --only functions --env-vars-file=.env.deploy.json
+```
+
+---
+
+#### 🔒 Secrets reales (`SECRET_JWT`)
+
+Esta clave **sí es sensible**, así que la gestionamos con el sistema de **secrets nativos de Firebase Functions**.
+
+1. Ejecuta el siguiente comando una vez para registrar tu secreto:
+
+   ```bash
+   firebase functions:secrets:set SECRET_JWT
+   ```
+
+   Te pedirá que agregues un valor deseado. Esa clave luego se inyecta automáticamente en producción como `process.env.SECRET_JWT`.
+
+2. En el código, declaramos el secreto con:
+
+   ```ts
+   import { defineSecret } from "firebase-functions/params";
+   export const secretJwt = defineSecret("SECRET_JWT");
+   ```
+
+3. Y lo usamos así:
+
+   ```ts
+   export const api = onRequest({ secrets: [secretJwt] }, app);
+   ```
+
+---
+
+### 🤖 Secrets en GitHub (Actions)
+
+GitHub necesita un token de Firebase para desplegar tus funciones. Solo necesitas agregar:
+
+#### 1. `FIREBASE_TOKEN`
+
+Este token le permite a GitHub desplegar automáticamente. Para generarlo:
+
+```bash
+firebase login:ci
+```
+
+Luego, en tu repositorio de GitHub:
+
+- Ve a **Settings > Secrets and variables > Actions**
+- Clic en **New repository secret**
+- Nombre: `FIREBASE_TOKEN`
+- Valor: pega el token generado
+
+---
+
+### 🧪 Resumen rápido
+
+| Variable       | Local (.env) | Producción (.env.deploy.json / Secret) | ¿Sensitiva? |
+| -------------- | ------------ | -------------------------------------- | ----------- |
+| ENVIRONMENT    | ✅           | ✅                                     | ❌ No       |
+| EXPIRES_AT     | ✅           | ✅                                     | ❌ No       |
+| SECRET_JWT     | ✅           | 🔐 Firebase Secret                     | ✅ Sí       |
+| FIREBASE_TOKEN | ❌           | 🔐 GitHub Secret                       | ✅ Sí       |
+
+En resumen, esta estructura permite mantener el entorno local limpio, el despliegue automatizado y los secretos seguros, sin complicarte demasiado durante el desarrollo.
 
 ---
 
@@ -283,39 +368,6 @@ Este proyecto incluye integración continua y despliegue automático mediante **
 - `.github/workflows/deploy-frontend.yml` → Despliega automáticamente el **frontend (Angular)**
 - `.github/workflows/deploy-functions.yml` → Despliega automáticamente el **backend (Firebase Functions)**
 
-### 🔐 Variables secretas necesarias
-
-Debes agregar las siguientes **secrets** en tu repositorio de GitHub:
-
-1. **`FIREBASE_TOKEN`**  
-   Este token le permite a GitHub realizar despliegues en tu cuenta de Firebase.  
-   Para generarlo, ejecuta en tu terminal:
-
-   ```bash
-   firebase login:ci
-   ```
-
-   Copia el token que te arroje y guárdalo en GitHub:
-
-   - Ve a tu repositorio en GitHub
-   - Dirígete a **Settings > Security > Secrets and Variables > Actions**
-   - Haz clic en **New repository secret**
-   - Nombre: `FIREBASE_TOKEN`
-   - Valor: (pega el token generado)
-
-2. **`SECRET_JWT`**  
-   Clave secreta para firmar y verificar tokens JWT. Puedes generarla usando Node.js o OpenSSL como se indica en la sección anterior.
-
-También las siguientes **variables** nuevamente en tu repositorio de GitHub:
-
-1. **`ENVIRONMENT`**  
-   Define el entorno actual del backend (`dev`, `staging`, `prod`, etc.). Recomiendo considerar el ambiente `prod`.
-
-2. **`EXPIRES_AT`**  
-   Tiempo de expiración para los tokens JWT expresado **en minutos**. Ejemplo: `60` para una hora, `1440` para un día.
-
----
-
 ## 🔐 Seguridad y autenticación
 
 - El backend devuelve un token con expiración al iniciar sesión
@@ -342,7 +394,8 @@ También las siguientes **variables** nuevamente en tu repositorio de GitHub:
 - [ ] Separar frontend y backend en proyectos distintos si el sistema escala
 - [ ] Paginar el listado de tareas para mejorar rendimiento y experiencia de usuario o aplicar un scroll infinito
 - [ ] Crear proyectos separados en Firebase por cada ambiente (`dev`, `staging`, `prod`) para aislar configuraciones y despliegues
-- [ ] Aprovechar otros recursos de Firebase según convenga: Authentication, Secrets, Storage, etc.
+- [ ] Aprovechar otros recursos de Firebase según convenga: Authentication, Storage, etc.
+- [ ] Explorar herramientas de terceros como Doppler o Vault para simplificar y centralizar la gestión de variables de entorno y secretos en entornos productivos.
 
 ---
 
