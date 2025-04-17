@@ -155,7 +155,6 @@ EXPIRES_AT=30
 ```
 
 > ⚠️ Importante: estos archivos **solo se usan en el entorno local (emulador)**.  
-> Firebase los ignora automáticamente al hacer `firebase deploy`.  
 > Este archivo **nunca debe subirse al repositorio**, ya está ignorado en `.gitignore`.
 
 💡 El emulador de Firebase es compatible con múltiples archivos `.env`, incluyendo:
@@ -169,73 +168,23 @@ https://firebase.google.com/docs/functions/config-env?hl=es-419&gen=2nd#emulator
 
 ---
 
-### 🚀 Producción (Firebase + GitHub Actions)
+#### 🔒 Secretos reales (`SECRET_JWT`)
 
-#### ✅ Variables de entorno (`ENVIRONMENT`, `EXPIRES_AT`)
+Para proteger tu clave JWT en producción, usamos **Firebase Secrets**, una funcionalidad oficial y segura que permite almacenar valores sensibles sin exponerlos en el código.
 
-Actualmente, **no es posible establecer `defineString()` con comandos CLI**.  
-En lugar de eso, la única manera compatible es usando un archivo `.env.<projectId>` con el mismo nombre de tu proyecto de Firebase.
-
-Ejemplo:
-
-Archivo: `.env.task-manager-6f53f`  
-Contenido:
-
-```env
-ENVIRONMENT=prd
-EXPIRES_AT=30
-```
-
-Este archivo será usado automáticamente por Firebase CLI si el `projectId` coincide.
-
----
-
-#### 🔒 Secrets reales (`SECRET_JWT`)
-
-Este sí puede ser registrado de forma oficial mediante Firebase Secrets Manager:
+1. Registra el secreto en tu proyecto Firebase (solo necesitas hacerlo una vez):
 
 ```bash
 firebase functions:secrets:set SECRET_JWT
 ```
 
-Luego, en tu código:
+2. Y actívalo al momento de exportar tu función:
 
 ```ts
-import { defineSecret } from "firebase-functions/params";
-export const secretJwt = defineSecret("SECRET_JWT");
+export const api = onRequest({ secrets: ["SECRET_JWT"] }, app);
 ```
 
-Y al desplegar:
-
-```ts
-export const api = onRequest({ secrets: [secretJwt] }, app);
-```
-
----
-
-### 🤖 Secrets en GitHub (Actions)
-
-GitHub necesita un token de Firebase para hacer deploy. Agrégalo en:
-
-- **Settings > Secrets and variables > Actions**
-- Nombre: `FIREBASE_TOKEN`
-
-Puedes generarlo con:
-
-```bash
-firebase login:ci
-```
-
----
-
-### 🧪 Resumen rápido
-
-| Variable       | Local (.env) | Producción (.env.<projectId> / Secret) | ¿Sensitiva? |
-| -------------- | ------------ | -------------------------------------- | ----------- |
-| ENVIRONMENT    | ✅           | ✅                                     | ❌ No       |
-| EXPIRES_AT     | ✅           | ✅                                     | ❌ No       |
-| SECRET_JWT     | ✅           | 🔐 Firebase Secret                     | ✅ Sí       |
-| FIREBASE_TOKEN | ❌           | 🔐 GitHub Secret                       | ✅ Sí       |
+Esto asegura que `SECRET_JWT` se inyecte automáticamente al entorno de tu función en tiempo de ejecución, sin exponerlo en ningún archivo público ni subirlo al repositorio.
 
 ---
 
@@ -373,6 +322,50 @@ Este proyecto incluye integración continua y despliegue automático mediante **
 
 - `.github/workflows/deploy-frontend.yml` → Despliega automáticamente el **frontend (Angular)**
 - `.github/workflows/deploy-functions.yml` → Despliega automáticamente el **backend (Firebase Functions)**
+
+#### ✅ Variables de entorno en GitHub (`ENVIRONMENT`, `EXPIRES_AT`, `PROJECT_ID`)
+
+Firebase CLI permite usar un archivo `.env.<projectId>` en producción si el nombre coincide con el `projectId`.  
+Para esto, GitHub Actions genera automáticamente ese archivo antes del despliegue:
+
+```yaml
+- name: Create .env.<projectId> dynamically
+    working-directory: functions
+    run: |
+      touch .env.${{ vars.PROJECT_ID }}
+      echo "ENVIRONMENT=${{ vars.ENVIRONMENT }}" >> .env.${{ vars.PROJECT_ID }}
+      echo "EXPIRES_AT=${{ vars.EXPIRES_AT }}" >> .env.${{ vars.PROJECT_ID }}
+```
+
+Este archivo:
+
+- **No está presente en tu repositorio**
+- **Se crea únicamente en el runner temporal**
+- **Es leído por Firebase CLI durante el `firebase deploy`**
+
+💡 **Importante:** Asegúrate de haber configurado previamente en tu repositorio de GitHub:
+**No agregues Secrets dentro de este archivo**
+
+- Los valores `PROJECT_ID`, `ENVIRONMENT` y `EXPIRES_AT` como **Variables** (`Settings > Variables`)
+
+> ✅ No necesitas subir ningún `.env` a tu repositorio  
+> ✅ No necesitas configurarlos manualmente en cada deploy  
+> ✅ Es seguro y automatizado
+
+#### 🤖 Secrets en GitHub (Actions)
+
+GitHub necesita un token de Firebase para hacer deploy. Agrégalo en:
+
+- **Settings > Secrets and variables > Actions**
+- Nombre: `FIREBASE_TOKEN`
+
+Puedes generarlo con:
+
+```bash
+firebase login:ci
+```
+
+---
 
 ## 🔐 Seguridad y autenticación
 

@@ -7,6 +7,7 @@ on:
       - "functions/**"
       - "firebase.json"
       - ".firebaserc"
+      - "functions/src/shared/utils/environment.ts"
       - ".github/workflows/deploy-functions.yml"
 
 jobs:
