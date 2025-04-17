@@ -68,6 +68,7 @@ export class DashboardComponent {
       () => {
         const filter = this.selectedFilter();
         const order = this.selectedOrder();
+
         this.loadTasks(filter, order);
       },
       { injector: this.effectInject }
