@@ -48,7 +48,7 @@ export class DashboardComponent {
 
   availableFilters = Filters;
   selectedFilter = signal<Filters>(Filters.All);
-  selectedOrder = signal<Order>(Order.Ascending);
+  selectedOrder = signal<Order>(Order.Descending);
 
   email: string = this.auth.getEmail() ?? '';
 

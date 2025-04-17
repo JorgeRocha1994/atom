@@ -64,7 +64,6 @@ root/
 ├── .gitignore                  → Ignora node_modules, .env, etc.
 ├── .firebaserc                 → Alias y vinculación a múltiples proyectos Firebase
 ├── firebase.json               → Configuración de hosting, funciones y reglas
-├── .env.deploy.json            → Variables de entorno productivas (no agregar secrets)
 └── README.md                   → Documentación del proyecto
 ```
 
@@ -155,92 +154,88 @@ SECRET_JWT=default_secret
 EXPIRES_AT=30
 ```
 
-> ⚠️ Importante: el archivo `.env` **solo funciona en desarrollo local**.  
-> Firebase lo ignora automáticamente al hacer `firebase deploy`.  
-> Para producción, usa `--env-vars-file` para variables normales y `firebase functions:secrets:set` para secretos sensibles.
-> Este archivo **nunca se sube al repositorio** por seguridad, ya está ignorado en `.gitignore`.
+> ⚠️ Importante: estos archivos **solo se usan en el entorno local (emulador)**.  
+> Firebase los ignora automáticamente al hacer `firebase deploy`.  
+> Este archivo **nunca debe subirse al repositorio**, ya está ignorado en `.gitignore`.
+
+💡 El emulador de Firebase es compatible con múltiples archivos `.env`, incluyendo:
+
+- `.env`
+- `.env.dev`
+- `.env.task-manager-6f53f` (usa tu `projectId`)
+
+Más información:  
+https://firebase.google.com/docs/functions/config-env?hl=es-419&gen=2nd#emulator_support
 
 ---
 
 ### 🚀 Producción (Firebase + GitHub Actions)
 
-#### ✅ Variables de entorno públicas (`ENVIRONMENT`, `EXPIRES_AT`)
+#### ✅ Variables de entorno (`ENVIRONMENT`, `EXPIRES_AT`)
 
-Estas variables no contienen información sensible, por lo que las cargamos con el archivo `.env.deploy.json`, que se usa automáticamente al desplegar:
+Actualmente, **no es posible establecer `defineString()` con comandos CLI**.  
+En lugar de eso, la única manera compatible es usando un archivo `.env.<projectId>` con el mismo nombre de tu proyecto de Firebase.
 
-```json
-{
-  "ENVIRONMENT": "prd",
-  "EXPIRES_AT": "10"
-}
+Ejemplo:
+
+Archivo: `.env.task-manager-6f53f`  
+Contenido:
+
+```env
+ENVIRONMENT=prd
+EXPIRES_AT=30
 ```
 
-No necesitas hacer nada más. GitHub Actions lo toma cuando se hace deploy con:
-
-```bash
-firebase deploy --only functions --env-vars-file=.env.deploy.json
-```
+Este archivo será usado automáticamente por Firebase CLI si el `projectId` coincide.
 
 ---
 
 #### 🔒 Secrets reales (`SECRET_JWT`)
 
-Esta clave **sí es sensible**, así que la gestionamos con el sistema de **secrets nativos de Firebase Functions**.
+Este sí puede ser registrado de forma oficial mediante Firebase Secrets Manager:
 
-1. Ejecuta el siguiente comando una vez para registrar tu secreto:
+```bash
+firebase functions:secrets:set SECRET_JWT
+```
 
-   ```bash
-   firebase functions:secrets:set SECRET_JWT
-   ```
+Luego, en tu código:
 
-   Te pedirá que agregues un valor deseado. Esa clave luego se inyecta automáticamente en producción como `process.env.SECRET_JWT`.
+```ts
+import { defineSecret } from "firebase-functions/params";
+export const secretJwt = defineSecret("SECRET_JWT");
+```
 
-2. En el código, declaramos el secreto con:
+Y al desplegar:
 
-   ```ts
-   import { defineSecret } from "firebase-functions/params";
-   export const secretJwt = defineSecret("SECRET_JWT");
-   ```
-
-3. Y lo usamos así:
-
-   ```ts
-   export const api = onRequest({ secrets: [secretJwt] }, app);
-   ```
+```ts
+export const api = onRequest({ secrets: [secretJwt] }, app);
+```
 
 ---
 
 ### 🤖 Secrets en GitHub (Actions)
 
-GitHub necesita un token de Firebase para desplegar tus funciones. Solo necesitas agregar:
+GitHub necesita un token de Firebase para hacer deploy. Agrégalo en:
 
-#### 1. `FIREBASE_TOKEN`
+- **Settings > Secrets and variables > Actions**
+- Nombre: `FIREBASE_TOKEN`
 
-Este token le permite a GitHub desplegar automáticamente. Para generarlo:
+Puedes generarlo con:
 
 ```bash
 firebase login:ci
 ```
 
-Luego, en tu repositorio de GitHub:
-
-- Ve a **Settings > Secrets and variables > Actions**
-- Clic en **New repository secret**
-- Nombre: `FIREBASE_TOKEN`
-- Valor: pega el token generado
-
 ---
 
 ### 🧪 Resumen rápido
 
-| Variable       | Local (.env) | Producción (.env.deploy.json / Secret) | ¿Sensitiva? |
+| Variable       | Local (.env) | Producción (.env.<projectId> / Secret) | ¿Sensitiva? |
 | -------------- | ------------ | -------------------------------------- | ----------- |
 | ENVIRONMENT    | ✅           | ✅                                     | ❌ No       |
 | EXPIRES_AT     | ✅           | ✅                                     | ❌ No       |
 | SECRET_JWT     | ✅           | 🔐 Firebase Secret                     | ✅ Sí       |
 | FIREBASE_TOKEN | ❌           | 🔐 GitHub Secret                       | ✅ Sí       |
-
-En resumen, esta estructura permite mantener el entorno local limpio, el despliegue automatizado y los secretos seguros, sin complicarte demasiado durante el desarrollo.
 
 ---
 
@@ -336,6 +331,16 @@ npm run build
 firebase deploy --only functions
 ```
 
+### 🪟 ¿Problemas al compilar en Windows?
+
+Si obtienes errores durante el build relacionados con saltos de línea o espacios (por ejemplo, con ESLint particularmente con CRLF o LF), ejecuta este comando:
+
+```bash
+npm run lint:fix
+```
+
+Esto corregirá automáticamente problemas comunes de formato y te permitirá continuar con el despliegue sin errores.
+
 ---
 
 ## 🔁 Opción 3: Desplegar ambos
@@ -395,6 +400,7 @@ Este proyecto incluye integración continua y despliegue automático mediante **
 - [ ] Separar frontend y backend en proyectos distintos si el sistema escala
 - [ ] Paginar el listado de tareas para mejorar rendimiento y experiencia de usuario o aplicar un scroll infinito
 - [ ] Crear proyectos separados en Firebase por cada ambiente (`dev`, `staging`, `prod`) para aislar configuraciones y despliegues
+  - [ ] Firebase planea permitir el uso del flag `--env-vars-file` para cargar variables directamente desde archivos `.env`. Esta opción está en desarrollo, pero una vez esté estable, podría integrarse fácilmente para mejorar la experiencia de despliegue.
 - [ ] Aprovechar otros recursos de Firebase según convenga: Authentication, Storage, etc.
 - [ ] Explorar herramientas de terceros como Doppler o Vault para simplificar y centralizar la gestión de variables de entorno y secretos en entornos productivos.
 
@@ -410,7 +416,7 @@ Este repositorio es **público solo con fines educativos** y como reto técnico.
 
 Sin embargo, puedes clonar el repositorio y usarlo como referencia o punto de partida en tus propios proyectos si lo prefieres.
 
-- Asegúrate de no exponer tu `FIREBASE_TOKEN` ni ningún secret sensible.
+- Asegúrate de no exponer tu `SECRET_JWT`, `FIREBASE_TOKEN` ni ningún secret sensible.
 - Nunca subas el archivo `.env` al repositorio.
 
 ---

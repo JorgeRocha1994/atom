@@ -9,8 +9,6 @@ import cors from 'cors';
 
 import { userRouter } from './src/interface/routes/user.router';
 import { taskRouter } from './src/interface/routes/tasks.router';
-import { secretJwt } from './src/shared/utils/environment';
-
 admin.initializeApp();
 const firestore = admin.firestore();
 
@@ -21,4 +19,9 @@ app.use(express.json());
 app.use('/user', userRouter(firestore));
 app.use('/task', taskRouter(firestore));
 
-export const api = onRequest({ secrets: [secretJwt] }, app);
+export const api = onRequest(
+  {
+    secrets: ['SECRET_JWT'],
+  },
+  app
+);
