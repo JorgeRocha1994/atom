@@ -4,8 +4,8 @@ import admin from 'firebase-admin';
 import express from 'express';
 import cors from 'cors';
 
-import { userRouter } from './interface/routes/user.router';
-import { taskRouter } from './interface/routes/tasks.router';
+import { userRouter } from './src/interface/routes/user.router';
+import { taskRouter } from './src/interface/routes/tasks.router';
 
 dotenv.config();
 
