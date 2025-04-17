@@ -342,7 +342,7 @@ También las siguientes **variables** nuevamente en tu repositorio de GitHub:
 - [ ] Separar frontend y backend en proyectos distintos si el sistema escala
 - [ ] Paginar el listado de tareas para mejorar rendimiento y experiencia de usuario o aplicar un scroll infinito
 - [ ] Crear proyectos separados en Firebase por cada ambiente (`dev`, `staging`, `prod`) para aislar configuraciones y despliegues
-- [ ] Aprovechar otros recursos de Firebase según convenga: Authentication, Storage, etc.
+- [ ] Aprovechar otros recursos de Firebase según convenga: Authentication, Secrets, Storage, etc.
 
 ---
 
