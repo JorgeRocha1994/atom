@@ -26,6 +26,13 @@ jobs:
         run: npm ci
         working-directory: functions
 
+      - name: Create .env.<projectId> dynamically
+        working-directory: functions
+        run: |
+          echo "ENVIRONMENT=${{ vars.ENVIRONMENT }}" >> functions/.env.${{ vars.PROJECT_ID }}
+          echo "EXPIRES_AT=${{ vars.EXPIRES_AT }}" >> functions/.env.${{ vars.PROJECT_ID }}
+          echo "SECRET_JWT=${{ secrets.SECRET_JWT }}" >> functions/.env.${{ vars.PROJECT_ID }}
+
       - name: Build backend
         run: npm run build
         working-directory: functions
