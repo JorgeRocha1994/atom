@@ -64,6 +64,7 @@ root/
 ├── .gitignore                  → Ignora node_modules, .env, etc.
 ├── .firebaserc                 → Alias y vinculación a múltiples proyectos Firebase
 ├── firebase.json               → Configuración de hosting, funciones y reglas
+├── .env.deploy.json            → Variables de entorno productivas (no agregar secrets)
 └── README.md                   → Documentación del proyecto
 ```
 
