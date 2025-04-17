@@ -6,6 +6,7 @@
     "noImplicitReturns": true,
     "noUnusedLocals": true,
     "outDir": "lib",
+    "rootDir": ".",
     "sourceMap": true,
     "strict": true,
     "target": "es2017",
@@ -15,5 +16,5 @@
     "isolatedModules": true
   },
   "compileOnSave": true,
-  "include": ["src", "test"]
+  "include": ["src", "test", "index.ts"]
 }
