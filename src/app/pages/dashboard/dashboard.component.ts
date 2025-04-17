@@ -44,13 +44,12 @@ export class DashboardComponent {
   private lastFilter = '';
   private lastOrder = '';
 
-  myTasks = signal<Task[]>([]);
+  email: string = this.auth.getEmail() ?? '';
 
+  myTasks = signal<Task[]>([]);
   availableFilters = Filters;
   selectedFilter = signal<Filters>(Filters.All);
   selectedOrder = signal<Order>(Order.Descending);
-
-  email: string = this.auth.getEmail() ?? '';
 
   @ViewChild(InputFormComponent) inputForm!: InputFormComponent;
   @ViewChild(TextareaFormComponent) textareaForm!: TextareaFormComponent;
