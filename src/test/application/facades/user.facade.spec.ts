@@ -3,7 +3,6 @@ import { UserUseFacade } from '@application/facades/user.facade';
 import { SignInUserUseCase } from '@application/use-cases/sign-in-user.usecase';
 import { SignUpUserUseCase } from '@application/use-cases/sign-up-user.usecase';
 import { UserToken } from '@domain/models/user.model';
-import { reloadPage } from '@shared/utils/navigation';
 
 jest.mock('@shared/utils/navigation', () => ({
   reloadPage: jest.fn(),

@@ -1,14 +1,13 @@
 import { Injectable } from '@angular/core';
 import { UserToken } from '@domain/models/user.model';
 import { reloadPage } from '@shared/utils/navigation';
-import { Router } from '@angular/router';
 
 @Injectable({ providedIn: 'root' })
 export class AuthTokenService {
   private token: string | null = null;
   private refreshTimeout: any = null;
 
-  constructor(private router: Router) {
+  constructor() {
     this.setTokenFromStorage();
   }
 

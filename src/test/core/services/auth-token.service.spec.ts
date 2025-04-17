@@ -1,5 +1,4 @@
 import { AuthTokenService } from '@core/services/auth-token.service';
-import { Router } from '@angular/router';
 import { UserToken } from '@domain/models/user.model';
 import { reloadPage } from '@shared/utils/navigation';
 
@@ -9,7 +8,6 @@ jest.mock('@shared/utils/navigation', () => ({
 
 describe('AuthTokenService', () => {
   let service: AuthTokenService;
-  let mockRouter: jest.Mocked<Router>;
 
   const mockUser: UserToken = {
     id: '1',
@@ -20,13 +18,9 @@ describe('AuthTokenService', () => {
   };
 
   beforeEach(() => {
-    mockRouter = {
-      navigate: jest.fn(),
-    } as any;
-
     localStorage.clear();
     jest.useFakeTimers();
-    service = new AuthTokenService(mockRouter);
+    service = new AuthTokenService();
   });
 
   afterEach(() => {
@@ -67,8 +61,7 @@ describe('AuthTokenService', () => {
     localStorage.setItem('auth_token', 'valid-token');
     localStorage.setItem('auth_expires_at', expiresAt.toISOString());
 
-    const instance = new AuthTokenService(mockRouter);
-
+    const instance = new AuthTokenService();
     expect(instance.getToken()).toBe('valid-token');
   });
 
@@ -79,8 +72,7 @@ describe('AuthTokenService', () => {
     localStorage.setItem('auth_token', 'expired-token');
     localStorage.setItem('auth_expires_at', expiredAt.toISOString());
 
-    const instance = new AuthTokenService(mockRouter);
-
+    const instance = new AuthTokenService();
     expect(instance.getToken()).toBeNull();
     expect(localStorage.getItem('auth_token')).toBeNull();
   });
