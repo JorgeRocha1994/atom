@@ -1,3 +1,6 @@
+import { defineSecret } from 'firebase-functions/params';
+export const secretJwt = defineSecret('SECRET_JWT');
+
 export const getEnvironment = (): string => process.env.ENVIRONMENT || 'dev';
 
 export const getJwtSecret = (): string => {

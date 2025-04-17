@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { UserToken } from '@domain/models/user.model';
+import { reloadPage } from '@shared/utils/navigation';
 import { Router } from '@angular/router';
 
 @Injectable({ providedIn: 'root' })
@@ -64,6 +65,6 @@ export class AuthTokenService {
     localStorage.removeItem('email');
     localStorage.removeItem('auth_token');
     localStorage.removeItem('auth_expires_at');
-    location.reload();
+    reloadPage();
   }
 }
