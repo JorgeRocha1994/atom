@@ -64,6 +64,6 @@ export class AuthTokenService {
     localStorage.removeItem('email');
     localStorage.removeItem('auth_token');
     localStorage.removeItem('auth_expires_at');
-    this.router.navigate(['/']);
+    location.reload();
   }
 }

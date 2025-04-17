@@ -56,6 +56,11 @@ export class DashboardComponent {
   @ViewChild(TextareaFormComponent) textareaForm!: TextareaFormComponent;
 
   ngOnInit() {
+    if (!this.auth.getUserId()) {
+      return;
+    }
+
+    this.myTasks.set([]);
     this.initTasks();
   }
 
