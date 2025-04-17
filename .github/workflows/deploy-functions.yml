@@ -32,7 +32,6 @@ jobs:
           touch .env.${{ vars.PROJECT_ID }}
           echo "ENVIRONMENT=${{ vars.ENVIRONMENT }}" >> .env.${{ vars.PROJECT_ID }}
           echo "EXPIRES_AT=${{ vars.EXPIRES_AT }}" >> .env.${{ vars.PROJECT_ID }}
-          echo "SECRET_JWT=${{ secrets.SECRET_JWT }}" >> .env.${{ vars.PROJECT_ID }}
 
       - name: Build backend
         run: npm run build
