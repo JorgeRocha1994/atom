@@ -1,0 +1,123 @@
+<section class="todoapp">
+  <header class="header">
+    <div class="container">
+      <p class="title">Welcome!</p>
+      <p class="subtitle">{{ email }}</p>
+      <p>All your tasks in one place</p>
+
+      <input-form
+        [type]="'text'"
+        [required]="true"
+        [placeholder]="'Type new todo*'"
+        [minLength]="3"
+        [maxLength]="50"
+        (enterPressed)="addTask($event)"
+        aria-label="Task Name"
+      />
+
+      <textarea-form
+        [placeholder]="'A little more detail (optional)'"
+        [minLength]="3"
+        [maxLength]="100"
+        aria-label="Description"
+      />
+
+      <button
+        class="add-button"
+        mat-button
+        extended
+        (click)="addTaskHandler()"
+        aria-label="Add"
+      >
+        <mat-icon>add</mat-icon>
+        Add Task
+      </button>
+    </div>
+  </header>
+  <div class="todo container">
+    <section class="main">
+      <ul class="todo-list">
+        @for (task of sortedTasks(); track task.id) {
+        <li>
+          <div class="view">
+            <input
+              class="toggle"
+              type="checkbox"
+              [attr.aria-checked]="task.completed"
+              [checked]="task.completed"
+              (change)="completeTask(task)"
+            />
+
+            <div class="task-content" (dblclick)="openDialog(task)">
+              <span class="title">{{ task.name }}</span>
+              <span class="sub-title bold">{{ task.createdAt }}</span>
+              <span class="sub-title">{{ task.detail }}</span>
+            </div>
+
+            <div class="actions">
+              @if (!task.completed) {
+              <button (click)="openDialog(task)" mat-mini-fab aria-label="Edit">
+                <mat-icon>edit</mat-icon>
+              </button>
+              }
+              <button
+                (click)="deleteTask(task)"
+                mat-mini-fab
+                aria-label="Delete"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </div>
+        </li>
+        }
+      </ul>
+    </section>
+    <footer class="footer">
+      <span class="todo-count"
+        ><strong>{{ sortedTasks().length }}</strong> item(s)</span
+      >
+      <ul class="filters">
+        <li>
+          <a
+            aria-label="Filter.All"
+            (click)="applyFilter('All')"
+            [class.selected]="selectedFilter() === availableFilters.All"
+            >All</a
+          >
+        </li>
+        <li>
+          <a
+            aria-label="Filter.Pending"
+            (click)="applyFilter('Pending')"
+            [class.selected]="selectedFilter() === availableFilters.Pending"
+            >Pending</a
+          >
+        </li>
+        <li>
+          <a
+            aria-label="Filter.Completed"
+            (click)="applyFilter('Completed')"
+            [class.selected]="selectedFilter() === availableFilters.Completed"
+            >Completed</a
+          >
+        </li>
+        @if(sortedTasks().length > 0) {
+        <li>
+          <a
+            class="clear-completed"
+            (click)="clearCompleted()"
+            aria-label="Clear"
+            >Clear completed</a
+          >
+        </li>
+        <li>
+          <a class="order" (click)="applyOrder()" aria-label="Order"
+            ><mat-icon>swap_vert</mat-icon></a
+          >
+        </li>
+        }
+      </ul>
+    </footer>
+  </div>
+</section>

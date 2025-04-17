@@ -1,0 +1,25 @@
+<mat-dialog-content>
+  <h2>Edit {{ data.name }}</h2>
+
+  <input-form
+    [type]="'text'"
+    [required]="true"
+    [placeholder]="'New task name*'"
+    [minLength]="3"
+    [maxLength]="50"
+    [value]="data.name"
+    (enterPressed)="onConfirm()"
+  />
+
+  <textarea-form
+    [placeholder]="'Add some detail (optional)'"
+    [minLength]="3"
+    [maxLength]="100"
+    [value]="data.detail ?? ''"
+  />
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button mat-button (click)="onNoClick()">Cancel</button>
+  <button mat-button (click)="onConfirm()" autofocus>Save</button>
+</mat-dialog-actions>

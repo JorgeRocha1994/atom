@@ -1,0 +1,13 @@
+@if(showToolbar) {
+<mat-toolbar class="background-gradient tool-bar-header">
+  <mat-toolbar-row>
+    <span>{{ pageTitle }}</span>
+    <span class="spacer"></span>
+    @if (isDevelopment) {
+    <span class="tag-env">{{ envName }}</span>
+    }
+    <button mat-button (click)="signOut()">Sign Out</button>
+  </mat-toolbar-row>
+</mat-toolbar>
+}
+<router-outlet />

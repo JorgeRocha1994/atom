@@ -1,0 +1,347 @@
+.todo-app {
+  max-height: 0;
+}
+
+.container {
+  min-width: 230px;
+  max-width: 550px;
+  margin: 0 auto;
+  padding: 0 auto;
+}
+
+.header {
+  background: #ff6600;
+  padding-bottom: 4rem;
+  display: flow-root;
+}
+
+.header .title {
+  font-size: 2rem;
+  font-weight: 400;
+  margin-bottom: 0;
+}
+
+.header .subtitle {
+  font-size: 0.8rem;
+  margin: 0 0 2rem 0;
+  user-select: none;
+}
+
+.todo {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  max-height: 400px;
+  height: 100%;
+  top: -53px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px 0 rgba(224, 157, 157, 0.2),
+    0 25px 50px 0 rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.main {
+  position: relative;
+  z-index: 2;
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.todo-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.todo-list li {
+  position: relative;
+  font-size: 24px;
+  border-bottom: 1px solid #ededed;
+  padding: 0rem 1rem;
+}
+
+.todo-list li:last-child {
+  border-bottom: none;
+}
+
+.todo-list li .view {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  border-bottom: 1px solid #eee;
+  padding: 1rem;
+  position: relative;
+  user-select: none;
+}
+
+.task-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.view .title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.view .sub-title {
+  font-size: 0.8rem;
+  color: #333;
+}
+
+.toggle {
+  appearance: none;
+  -webkit-appearance: none;
+  border: none;
+  background: transparent;
+  width: 10px;
+  cursor: pointer;
+  position: relative;
+  flex-shrink: 0;
+  display: inline-block;
+}
+
+.toggle::before {
+  content: "";
+  display: block;
+  width: 24px;
+  height: 24px;
+  border: 2px solid #999;
+  border-radius: 50%;
+  background: white;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-sizing: border-box;
+}
+
+.toggle:checked::before {
+  background-image: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2240%22%20height%3D%2240%22%20viewBox%3D%22-10%20-18%20100%20135%22%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2250%22%20fill%3D%22none%22%20stroke%3D%22%2359A193%22%20stroke-width%3D%223%22%2F%3E%3Cpath%20fill%3D%22%233EA390%22%20d%3D%22M72%2025L42%2071%2027%2056l-4%204%2020%2020%2034-52z%22%2F%3E%3C%2Fsvg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 25px 32px;
+  background-position-x: right;
+  background-color: white;
+  border-color: #3ea390;
+}
+
+.toggle:checked + .task-content .title {
+  text-decoration: line-through;
+  color: #aaa;
+  opacity: 0.8;
+}
+
+.actions {
+  display: block;
+  position: absolute;
+  right: 0;
+  top: 1rem;
+}
+
+.actions button {
+  color: #999;
+  cursor: pointer;
+  background-color: transparent;
+  border: none;
+  box-shadow: none;
+  margin: 0;
+  padding: 0;
+  border-radius: 50%;
+  transform: scale(0.8);
+}
+
+.actions button mat-icon {
+  padding: 0;
+  margin: 0;
+}
+
+.todo-list li .actions {
+  display: none;
+  float: right;
+}
+
+.todo-list li:hover .actions {
+  display: block;
+}
+
+.todo-list li.editing:last-child {
+  margin-bottom: -1px;
+}
+
+.footer {
+  flex-shrink: 0;
+  padding: 1rem 1.5rem;
+  height: 20px;
+  text-align: center;
+  font-size: 15px;
+  border-top: 1px solid #e6e6e6;
+  background: white;
+  z-index: 1;
+}
+
+.todo-count {
+  float: left;
+  text-align: left;
+}
+
+.todo-count strong {
+  font-weight: 300;
+}
+
+.filters {
+  float: right;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  right: 0;
+  left: 0;
+}
+
+.filters li {
+  display: inline;
+}
+
+.filters li a {
+  color: inherit;
+  margin: 3px;
+  padding: 3px 7px;
+  text-decoration: none;
+  border: 1px solid transparent;
+  border-radius: 3px;
+}
+
+.filters li a:hover {
+  border-color: #ff6600;
+  cursor: pointer;
+}
+
+.filters li a.selected {
+  font-weight: 600;
+  border-color: #ff6600;
+}
+
+.filters li a.clear-completed:hover {
+  border-color: #dddddd;
+  background-color: #dddddd;
+  text-decoration: underline;
+}
+
+.filters li a.order mat-icon {
+  position: absolute;
+}
+
+.filters li a.order:hover {
+  border-color: transparent;
+}
+
+.filters li a.order {
+  border-color: none;
+  padding: 0;
+  margin: 0;
+}
+
+.filters li:last-child {
+  margin: 0 10px;
+}
+
+.add-button {
+  width: 100%;
+  background: white;
+  border-radius: 8px;
+  margin: 0.5rem 0;
+  color: #ff6600;
+}
+
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  .toggle-all,
+  .todo-list li .toggle {
+    background: none;
+  }
+
+  .todo-list li .toggle {
+    height: 40px;
+  }
+}
+
+@media (max-width: 599px) {
+  .container {
+    padding: 0 1rem;
+    max-height: 450px;
+  }
+
+  .todo {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    ::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .header .title {
+    font-size: 1.5rem;
+    font-weight: 400;
+    margin: 10px 0 0 0;
+  }
+
+  .header .subtitle {
+    font-size: 0.8rem;
+    margin: 0 0 1rem 0;
+  }
+
+  .header .subtitle,
+  .header p {
+    text-align: center;
+  }
+
+  .footer {
+    height: 80px;
+  }
+
+  .todo-count {
+    float: none;
+    text-align: center;
+  }
+
+  .footer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1rem;
+  }
+
+  .filters li {
+    display: inline-block;
+  }
+
+  .todo-list li .actions {
+    display: block;
+  }
+
+  .todo-list li {
+    padding: 0;
+  }
+
+  .view {
+    padding: 0.5rem;
+  }
+}
+
+@media (min-width: 600px) and (max-width: 1023px) {
+  .container {
+    max-height: 500px;
+  }
+
+  .todo {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    ::-webkit-scrollbar {
+      display: none;
+    }
+  }
+}

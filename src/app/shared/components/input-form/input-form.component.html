@@ -1,0 +1,14 @@
+<input
+  #inputRef
+  class="input"
+  [type]="type"
+  [placeholder]="placeholder"
+  (keydown.enter)="onEnter()"
+  [formControl]="inputControl"
+  [maxlength]="maxLength"
+  [value]="value"
+/>
+
+@if (inputControl.invalid && errorMessage()) {
+<small class="error-text">{{ errorMessage() }}</small>
+}

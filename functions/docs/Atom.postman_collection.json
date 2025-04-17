@@ -1,0 +1,392 @@
+{
+	"info": {
+		"_postman_id": "14b0e669-07c4-4e9b-8c1b-8c4a217c9b8e",
+		"name": "Atom",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "11158820"
+	},
+	"item": [
+		{
+			"name": "Get User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"if (!pm?.response) {\r",
+							"  console.warn('No response received from the server.');\r",
+							"  return;\r",
+							"}\r",
+							"\r",
+							"let jsonData;\r",
+							"try {\r",
+							"  jsonData = pm.response.json();\r",
+							"} catch (err) {\r",
+							"  console.error('Failed to parse response as JSON.', err);\r",
+							"  return;\r",
+							"}\r",
+							"\r",
+							"if (!jsonData || typeof jsonData !== 'object') {\r",
+							"  console.warn('Response is not a valid JSON object.');\r",
+							"  return;\r",
+							"}\r",
+							"\r",
+							"const userId = jsonData.data?.id;\r",
+							"const token = jsonData.data?.token;\r",
+							"const expiresAt = jsonData.data?.expiresAt;\r",
+							"\r",
+							"if (userId) {\r",
+							"  pm.environment.set('user-id', userId);\r",
+							"  console.log('✅ User ID set as environment variable:', userId);\r",
+							"} else {\r",
+							"  console.warn('⚠️ No user ID found in response.');\r",
+							"}\r",
+							"\r",
+							"if (token) {\r",
+							"  pm.environment.set('auth-token', token);\r",
+							"  console.log('✅ Token set as environment variable:', token);\r",
+							"} else {\r",
+							"  console.warn('⚠️ No token found in response.');\r",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/{{project-id}}/{{zone}}/api/user?email=jorge@email.com",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"{{project-id}}",
+						"{{zone}}",
+						"api",
+						"user"
+					],
+					"query": [
+						{
+							"key": "email",
+							"value": "jorge@email.com"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"if (!pm?.response) {\r",
+							"  console.warn('No response received from the server.');\r",
+							"  return;\r",
+							"}\r",
+							"\r",
+							"let jsonData;\r",
+							"try {\r",
+							"  jsonData = pm.response.json();\r",
+							"} catch (err) {\r",
+							"  console.error('Failed to parse response as JSON.', err);\r",
+							"  return;\r",
+							"}\r",
+							"\r",
+							"if (!jsonData || typeof jsonData !== 'object') {\r",
+							"  console.warn('Response is not a valid JSON object.');\r",
+							"  return;\r",
+							"}\r",
+							"\r",
+							"const userId = jsonData.data?.id;\r",
+							"const token = jsonData.data?.token;\r",
+							"const expiresAt = jsonData.data?.expiresAt;\r",
+							"\r",
+							"if (userId) {\r",
+							"  pm.environment.set('user-id', userId);\r",
+							"  console.log('✅ User ID set as environment variable:', userId);\r",
+							"} else {\r",
+							"  console.warn('⚠️ No user ID found in response.');\r",
+							"}\r",
+							"\r",
+							"if (token) {\r",
+							"  pm.environment.set('auth-token', token);\r",
+							"  console.log('✅ Token set as environment variable:', token);\r",
+							"} else {\r",
+							"  console.warn('⚠️ No token found in response.');\r",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"jorge@email.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/{{project-id}}/{{zone}}/api/user",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"{{project-id}}",
+						"{{zone}}",
+						"api",
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Task",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"if (!pm?.response) {\r",
+							"  console.warn('No response received from the server.');\r",
+							"  return;\r",
+							"}\r",
+							"\r",
+							"let jsonData;\r",
+							"try {\r",
+							"  jsonData = pm.response.json();\r",
+							"} catch (err) {\r",
+							"  console.error('Failed to parse response as JSON.', err);\r",
+							"  return;\r",
+							"}\r",
+							"\r",
+							"if (!jsonData || typeof jsonData !== 'object') {\r",
+							"  console.warn('Response is not a valid JSON object.');\r",
+							"  return;\r",
+							"}\r",
+							"\r",
+							"const lastTaskId = jsonData.data?.id;\r",
+							"if (lastTaskId) {\r",
+							"  pm.environment.set('last-task-id', lastTaskId);\r",
+							"  console.log('✅ Task ID set as environment variable:', lastTaskId);\r",
+							"} else {\r",
+							"  console.warn('⚠️ No Task ID found in response.');\r",
+							"}\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{auth-token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Clean my room\",\r\n    \"detail\": \"It's very dirty\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/{{project-id}}/{{zone}}/api/task/{{user-id}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"{{project-id}}",
+						"{{zone}}",
+						"api",
+						"task",
+						"{{user-id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Task",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{auth-token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Clean my room (again)\",\r\n    \"detail\": \"It's very veeeery dirty\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/{{project-id}}/{{zone}}/api/task/{{user-id}}/{{last-task-id}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"{{project-id}}",
+						"{{zone}}",
+						"api",
+						"task",
+						"{{user-id}}",
+						"{{last-task-id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Tasks",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{auth-token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Clean my room\",\r\n    \"detail\": \"It's very dirty\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/{{project-id}}/{{zone}}/api/task/{{user-id}}?filter=pending&order=desc",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"{{project-id}}",
+						"{{zone}}",
+						"api",
+						"task",
+						"{{user-id}}"
+					],
+					"query": [
+						{
+							"key": "filter",
+							"value": "pending"
+						},
+						{
+							"key": "order",
+							"value": "desc"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Toggle Task",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{auth-token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/{{project-id}}/{{zone}}/api/task/{{user-id}}/{{last-task-id}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"{{project-id}}",
+						"{{zone}}",
+						"api",
+						"task",
+						"{{user-id}}",
+						"{{last-task-id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Task",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{auth-token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/{{project-id}}/{{zone}}/api/task/{{user-id}}/{{last-task-id}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"{{project-id}}",
+						"{{zone}}",
+						"api",
+						"task",
+						"{{user-id}}",
+						"{{last-task-id}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

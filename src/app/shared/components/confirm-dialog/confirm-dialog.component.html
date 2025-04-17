@@ -1,0 +1,23 @@
+<mat-dialog-content>
+  <h2>{{ data.title || "Confirm" }}</h2>
+  <p>{{ data.message }}</p>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button
+    mat-button
+    class="cancel-button"
+    (click)="dialogRef.close(false)"
+    aria-label="Cancel"
+  >
+    Cancel
+  </button>
+  <button
+    mat-button
+    class="confirm-button"
+    (click)="dialogRef.close(true)"
+    aria-label="Confirm"
+    autofocus
+  >
+    OK
+  </button>
+</mat-dialog-actions>

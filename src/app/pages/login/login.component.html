@@ -1,0 +1,38 @@
+<div class="full-container background-gradient">
+  <div class="login-container">
+    <h2>Welcome to Task Manager</h2>
+    <p>
+      Start organizing your day in seconds. Just enter your email to log in.
+    </p>
+    <input-form
+      [type]="'email'"
+      [required]="true"
+      [placeholder]="'E-mail*'"
+      [minLength]="3"
+      [maxLength]="50"
+      (enterPressed)="signIn($event)"
+      aria-label="Email"
+    />
+    <br />
+    <button
+      class="button-container"
+      mat-button
+      extended
+      (click)="signInHandler()"
+      aria-label="Sign in"
+    >
+      <mat-icon>login</mat-icon>
+      Sign in
+    </button>
+    <button
+      class="button-container"
+      mat-button
+      extended
+      (click)="signUp()"
+      aria-label="Sign Up"
+    >
+      <mat-icon>person</mat-icon>
+      Sign Up
+    </button>
+  </div>
+</div>
